@@ -90,6 +90,10 @@
     }
 }
 
+.showspoilers,.spoilers,#hints {
+    display: block;
+}
+
 div#TOC {
     float: left;
     margin-right: 20px;
@@ -131,7 +135,7 @@ html {
 }
 
 h1,h2,h3,h4,h5,strong {
-    font-family: Baskerville,Trebuchet,Georgia,Arial,"Lucida Grande",Garamond,Palatino,Verdana,SimHei;
+    font-family: Verdana,Georgia,Baskerville,Trebuchet,Arial,"Lucida Grande",Garamond,Palatino,SimHei;
 }
 
 h3 span.date {
@@ -184,7 +188,7 @@ div#disqus_thread {
 
 a {
     color: #303C3C;
-    text-decoration: none;
+    text-decoration: underline;
 }
 
 div#content a {

@@ -10,32 +10,8 @@ html_parser = HTMLParser.HTMLParser()
 remove = []
 
 replace = [
-    ("<i>", "_"), ("</i>", "_"),
-    ("<code>", "`"), ("</code>", "`"),
-    ("<pre>", "```txt\n"), ("</pre>", "\n```"),
-    ("<br />", "\n"),
-    ("<li>", "* "),
-    ("<sup>", " "),
+    ('"/static/images', '"https://leetcode.com/static/images'),
 ]
-
-
-def replace_images(content):
-    beg = 0
-
-    while True:
-        beg = content.find('<img src="', beg)
-        if beg == -1:
-            break
-
-        beg += 10
-        end = content.index('"', beg)
-
-        md = '" />' + "![](%s) <br" % content[beg:end]
-        content = content[:beg] + md + content[(end + 1):]
-
-        beg += len(md) + 5
-
-    return content
 
 
 def parse(path):
@@ -63,35 +39,22 @@ def parse(path):
     for pattern in replace:
         content = content.replace(*pattern)
 
-    content = replace_images(content)
-    content = re.sub("<[^<]+?>", "", content)
-
-    content = content.decode("utf-8")
-    content = html_parser.unescape(content).encode("utf-8")
-
-    sio = StringIO.StringIO(content)
-    out = ""
-    pre = False
-
-    for line in sio:
-        line = line.rstrip()
-
-        if "```" in line:
-            pre = not pre
-
-        if not pre:
-            line = line.lstrip()
-
-        if not line:
-            continue
-
-        out += line + "\n\n"
-
-    return ("## %s\n" % title) + out + '\n'
+    return ("<h2>%s</h2>\n" % title) + content + "<br />\n"
 
 
 def main():
-    out = "LeetCode Problems\n====\n\n"
+    out = '''<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <title>LeetCode Problems</title>
+  <link rel="stylesheet" href="pandoc.css" type="text/css" />
+</head>
+<body>
+
+<h1>LeetCode Problems</h1>
+'''
     count = 0
 
     for top, dirs, nondirs in os.walk("raw"):
@@ -106,7 +69,9 @@ def main():
                 if count == 2000:
                     break
 
-    with open("LeetCode.md", "w") as outf:
+    out += "</body></html>"
+
+    with open("LeetCode.html", "w") as outf:
         outf.write(out)
 
     print("DONE!")
