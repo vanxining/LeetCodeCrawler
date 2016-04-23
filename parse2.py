@@ -39,7 +39,20 @@ def parse(path):
     for pattern in replace:
         content = content.replace(*pattern)
 
-    return ("<h2>%s</h2>\n" % title) + content + "<br />\n"
+    content = remove_tree_serialization_hints(content)
+
+    return ("<h2>%s</h2>\n" % title) + content + "\n<br />\n"
+
+
+def remove_tree_serialization_hints(content):
+    beg = content.find("OJ's Binary Tree Serialization")
+    if beg == -1:
+        return content
+
+    beg = content[:beg].rindex('<p class="showspoilers">confused what')
+    end = content.index('</div></p>', beg) + 6
+
+    return content[:beg] + content[end:]
 
 
 def main():
@@ -81,6 +94,7 @@ def test():
     out = ""
     out += parse("raw/084.largest-rectangle-in-histogram.html")
     out += parse("raw/031.next-permutation.html")
+    out += parse("raw/094.binary-tree-inorder-traversal.html")
     print out
 
 
