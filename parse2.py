@@ -29,7 +29,8 @@ def parse(path):
         return ""
 
     beg += 18
-    end = html.index("<div>", beg)
+    end = html.index('<a href="/subscribe/">Subscribe</a>', beg)
+    end = html.rindex("<div>", beg, end)
 
     content = html[beg:end]
 
@@ -40,8 +41,27 @@ def parse(path):
         content = content.replace(*pattern)
 
     content = remove_tree_serialization_hints(content)
+    content = add_hints_alert(content)
+    content = remove_credits(content)
 
     return ("<h2>%s</h2>\n" % title) + content + "\n<br />\n"
+
+
+def add_hints_alert(content):
+    pos = content.find('<ol id="hints">')
+    if pos == -1:
+        return content
+
+    return content[:pos] + "<p><b>Hints:</b></p>\n" + content[pos:]
+
+
+def remove_credits(content):
+    pos = content.find("<p><b>Credits:</b>")
+    if pos == -1:
+        return content
+
+    end = content.index("</p>", pos) + 4
+    return content[:pos] + content[end:]
 
 
 def remove_tree_serialization_hints(content):
@@ -92,10 +112,13 @@ def main():
 
 def test():
     out = ""
+    out += parse("raw/229.majority-element-ii.html")
+    out += parse("raw/216.combination-sum-iii.html")
     out += parse("raw/084.largest-rectangle-in-histogram.html")
     out += parse("raw/031.next-permutation.html")
     out += parse("raw/094.binary-tree-inorder-traversal.html")
     print out
+    quit()
 
 
 if __name__ == "__main__":
